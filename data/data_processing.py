@@ -93,6 +93,11 @@ def enrich_data():
         readmes.append(readme_data)
 
     data["Readme"] = readmes
+    # data["Complete Project Information"] = data[["Description", "Tags", "Readme"]].agg(' '.join, axis = 1)
+    data["Complete Project Information"] = data["Description"] + " " + \
+                                           data ["Tags"] + " " + \
+                                           data["Language"] + " " + \
+                                           data["Readme"]
     data.to_csv("./data/processed_data.csv", encoding='utf-8')
 
 def clean_data():
