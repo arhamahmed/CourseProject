@@ -1,17 +1,14 @@
 # todo:
-# - data:
-# -     read data: read csv file
-# -     enrich data: add readme column by scraping url link
-# -     format data: create new column `full_desc`  = description + tags + readme
-# -     clean data: remove observations that have empty full `full_desc`
-# - modelling:
-# -     create model
-# -     train model / create predictions
-# -     return top ranked docs
 # - evaluation:
 # -     explicit: ask some ppl to try it out
 # -     implicit: compare top ranked docs with ones ppl actually click on in the results (track clicks)
 # - ui/cli:
-# -     input can be list of topics
-# -     optionally allow importing of github profile if enough time
-# -     output is model results
+# -     allow importing of github profile if enough time
+# -     cleaner ui for selecting repos e.g. just browsing list of dataset repos
+from model import recommend
+from data.data_processing import prepare_data
+
+prepare_data()
+print("Input the index of a repository you like and want recommendations for (a number):")
+input_indices = list(map(int, input().split(" ")))
+recommend(input_indices)

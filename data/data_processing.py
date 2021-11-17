@@ -109,8 +109,8 @@ def clean_data():
             data.drop([i, i])
             print("Dropping observation: " + i)
 
-if not exists('./data/processed_data.csv'):
-    enrich_data()
-clean_data()
-
-print("Completed processing.")
+def prepare_data():
+    if not exists('./data/processed_data.csv'):
+        enrich_data()
+    clean_data()
+    print("Completed data processing.")
