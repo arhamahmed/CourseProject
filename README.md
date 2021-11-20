@@ -9,4 +9,4 @@ Create a GitHub PAT token and paste it in a new file `github_pat.txt` placed in 
 
 ## Running
 
-Run `python3 main.py` then enter a space-separated list of #s from 0 to 980 (WIP)
+Run `python3 main.py` then follow the prompts

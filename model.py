@@ -3,7 +3,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import pandas
 
-# TODO: ensure input in dataset else fetch the data for it (do check/retrieval/etc in the data_processing part)
 def recommend(inputs):
     # computing similaries
     tfidf_vectorizer = TfidfVectorizer(stop_words='english')

@@ -1,5 +1,6 @@
 REPO_NAME_PLACEHOLDER = '<REPO_NAME>'
 REPO_OWNER_PLACEHOLDER = '<REPO_OWNER>'
+LOGIN_PLACEHOLDER = '<LOGIN>'
 README_IDENTIFER = 'parseReadmeAttempt'
 github_readme_only = \
 """
@@ -145,4 +146,17 @@ full_github_repo_data = \
             text
         }
     }
+"""
+
+get_starred_repos = \
+"""
+query {
+  user: user(login: "<LOGIN>") {
+    starredRepositories(first: 100) {
+      nodes {
+        nameWithOwner
+      }
+    }
+  }
+}
 """
