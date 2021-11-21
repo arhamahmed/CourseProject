@@ -30,6 +30,8 @@ def recommend(inputs):
     for input in inputs:
         print("Input: " + str(data["Repository Name"][input]) + "(" + short_desc(data["Description"][input], 75))
     print("--------------------")
+    count = 0
     for i in indices:
-        print("Recommendation # " + str(i) + ": " + str(data["Repository Name"][i]) + ": " + short_desc(data['Description'][i], 75))
+        print("Recommendation # " + str(count) + ": " + str(data["Repository Name"][i]) + ": " + short_desc(data['Description'][i], 75))
+        count = count + 1
     return indices
