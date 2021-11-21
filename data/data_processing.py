@@ -4,6 +4,13 @@ import requests
 from os.path import exists
 from data.queries import *
 
+def short_desc(value, limit):
+    val = str(value)
+    return (str(val[0:min(len(val), limit)]) + "...")
+
+def get_repo_index(data, owner, repo_name):
+    return data.loc[(data['Repository Name'] == repo_name) & (data['Username'] == owner)].index.values.item()
+
 async def import_user(username):
     print('Importing your starred repos... Note that we\'re limited to the first 100 by GitHub\'s APIs')
     res = await run_general_query(get_starred_repos.replace(LOGIN_PLACEHOLDER, username))
@@ -13,7 +20,7 @@ async def import_user(username):
         repos = repos + repo.get('nameWithOwner') + ' '
     repos = repos[0:-1]
     print('Discovered the following repos: ' + repos)
-    await fetch_repos(repos.split(' '))
+    return await fetch_repos(repos.split(' '))
 
 # repoInfo is a list of strings in the format owner/repoName
 async def fetch_repos(repoInfo):
@@ -23,12 +30,13 @@ async def fetch_repos(repoInfo):
         parts = str(repo).split("/")
         res = await run_data_query(full_github_repo_data, parts[0], parts[1])
         repoDatum.append(res)
-    append_data(repoDatum)
+    return append_data(repoDatum)
 
 def append_data(repoDatum):
     if not exists('./data/processed_data.csv'):
         return error("Could not find processed data file")
-    data = pandas.read_csv('./data/processed_data.csv')
+    data = pandas.read_csv('./data/processed_data.csv', index_col = 0)
+    indices = []
     for repoData in repoDatum:
         readme = get_readme_from_raw(repoData)
         owner = repoData.get("data").get("repo").get("owner").get("login")
@@ -55,10 +63,12 @@ def append_data(repoDatum):
                 'Language', 'Number of Stars', 'Tags', 'Url', 'Readme', 'Complete Project Information' \
             ])
         if is_value_missing_from_column(data, 'Repository Name', name):
-            print("Added " + str(owner) + "/" + str(name) + " to the dataset")
-            data = data.append(df, sort = True)
-    print("Updating the dataset now...")
+            data = data.append(df, sort = True, ignore_index = True)
+        else:
+            print("Skipping addition of " + str(owner) + "/" + str(name) + " as it already exists")
+        indices.append(get_repo_index(data, owner, name))
     data.to_csv("./data/processed_data.csv", encoding='utf-8')
+    return indices
     
 def is_value_missing_from_column(dataset, column, value):
     return len(dataset[dataset[column].str.contains(value)]) == 0
@@ -110,7 +120,7 @@ async def fetch_readme(owner, repo_name):
     return get_readme_from_raw(json_res)
 
 def clean_data():
-    data = pandas.read_csv('./data/processed_data.csv')
+    data = pandas.read_csv('./data/processed_data.csv', index_col = 0)
     for i in range(0, data.__len__()):
         # drop observations that have a core field missing
         if data["Description"][i] == None and data["Tags"][i] == None and data["Readme"][i] == None:

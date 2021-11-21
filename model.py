@@ -1,6 +1,7 @@
 #Import TfIdfVectorizer from scikit-learn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+from data.data_processing import short_desc
 import pandas
 
 def recommend(inputs):
@@ -18,17 +19,17 @@ def recommend(inputs):
         # score individual inputs and add the top to a list of candidates
         scores = list(enumerate(cosine_similarity[input]))
         scores = sorted(scores, key = lambda score: score[1], reverse = True)
-        final_scores = final_scores + scores[1:6]
+        final_scores = final_scores + scores[1:11]
 
-    # sort the final list of top recommended repos and take the top 5
+    # sort the final list of top recommended repos and take the top 10
     final_scores = sorted(final_scores, key = lambda score: score[1], reverse = True)
-    final_scores = final_scores[1:6]
-    print("Scores: " + str(final_scores))
+    final_scores = final_scores[1:11]
     indices = [entry[0] for entry in final_scores]
 
+    print()
     for input in inputs:
-        print("Input " + str(input) + ": " + str(data["Repository Name"][input]) + " with the description: " + str(data["Description"][input]) + "\n---")
-
+        print("Input: " + str(data["Repository Name"][input]) + "(" + short_desc(data["Description"][input], 75))
+    print("--------------------")
     for i in indices:
-        print("Recommendation # " + str(i) + ": " + str(data["Repository Name"][i]) + ". desc: " + str(data["Description"][i]))
+        print("Recommendation # " + str(i) + ": " + str(data["Repository Name"][i]) + ": " + short_desc(data['Description'][i], 75))
     return indices
